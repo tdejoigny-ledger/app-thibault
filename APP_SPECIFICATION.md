@@ -54,7 +54,7 @@ The address can be optionally checked on the device before being returned.
 | Chain code                                                       | var    |
 
 
-### SIGN aaaa TRANSACTION
+### SIGN Boilerplate TRANSACTION
 
 #### Description
 
