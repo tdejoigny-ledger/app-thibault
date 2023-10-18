@@ -5,20 +5,20 @@ This documentation is a template and shall be updated with your own APDUs.
 
 ## About
 
-This documentation describes the APDU messages interface to communicate with the Boilerplate application.
+This documentation describes the APDU messages interface to communicate with the aaaa application.
 
 The application covers the following functionalities :
 
-  - Get a public Boilerplate address given a BIP 32 path
-  - Sign a basic Boilerplate transaction given a BIP 32 path and raw transaction
-  - Retrieve the Boilerplate app version
-  - Retrieve the Boilerplate app name
+  - Get a public aaaa address given a BIP 32 path
+  - Sign a basic aaaa transaction given a BIP 32 path and raw transaction
+  - Retrieve the aaaa app version
+  - Retrieve the aaaa app name
 
 The application interface can be accessed over HID or BLE
 
 ## APDUs
 
-### GET BOILERPLATE PUBLIC ADDRESS
+### GET aaaa PUBLIC ADDRESS
 
 #### Description
 
@@ -54,11 +54,11 @@ The address can be optionally checked on the device before being returned.
 | Chain code                                                       | var    |
 
 
-### SIGN BOILERPLATE TRANSACTION
+### SIGN aaaa TRANSACTION
 
 #### Description
 
-This command signs a Boilerplate transaction after having the user validate the transactions parameters.
+This command signs a aaaa transaction after having the user validate the transactions parameters.
 
 The input data is the RLP encoded transaction streamed to the device in 255 bytes maximum data chunks.
 
@@ -100,7 +100,7 @@ The input data is the RLP encoded transaction streamed to the device in 255 byte
 
 #### Description
 
-This command returns boilerplate application version
+This command returns aaaa application version
 
 #### Coding
 
@@ -127,7 +127,7 @@ None
 
 #### Description
 
-This command returns boilerplate application name
+This command returns aaaa application name
 
 #### Coding
 
