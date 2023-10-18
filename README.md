@@ -1,6 +1,6 @@
 # Ledger Thibault Application
 
-This is a Thibault application which can be forked to start a new project for the Ledger Nano S/X.
+This is a Thibault application which can be forked to start a new project for the Ledger Nano S/SP/X.
 
 ## Prerequisite
 
