@@ -16,20 +16,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Check file existence
-      run: |
-        if [ -f toto.txt ]; then
-          echo "toto.txt exists."
-        else
-          echo "toto.txt does not exist."
-          exit 1
-        fi
-
     - name: Check file contents
       run: |
-        if grep -q "coucou" toto.txt; then
+        if [ -f toto.txt ] && grep -q "coucou" toto.txt; then
           echo "toto.txt contains 'coucou'."
           exit 1
         else
-          echo "toto.txt does not contain 'coucou'."
+          echo "toto.txt does not contain 'coucou' or does not exist."
         fi
