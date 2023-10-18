@@ -1,0 +1,35 @@
+name: File Content Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  file-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Check file existence
+      run: |
+        if [ -f toto.txt ]; then
+          echo "toto.txt exists."
+        else
+          echo "toto.txt does not exist."
+          exit 1
+        fi
+
+    - name: Check file contents
+      run: |
+        if grep -q "coucou" toto.txt; then
+          echo "toto.txt contains 'coucou'."
+          exit 1
+        else
+          echo "toto.txt does not contain 'coucou'."
+        fi
