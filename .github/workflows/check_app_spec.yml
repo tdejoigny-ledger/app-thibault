@@ -18,9 +18,7 @@ jobs:
 
     - name: Check file contents
       run: |
-        if [ -f toto.txt ] && grep -q "coucou" toto.txt; then
-          echo "toto.txt contains 'coucou'."
+        if [ -f APP_SPECIFICATION.md ] && grep -q "Boilerplate" APP_SPECIFICATION.md; then
+          echo "Please update the 'APP_SPECIFICATION.md' file with your own app data."
           exit 1
-        else
-          echo "toto.txt does not contain 'coucou' or does not exist."
         fi
