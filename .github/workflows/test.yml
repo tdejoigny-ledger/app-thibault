@@ -1,0 +1,65 @@
+name: List Repositories
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  get_repos:
+    runs-on: ubuntu-latest
+    outputs:
+      repo_info: ${{ steps.set_repo_info.outputs.repo_info }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install tomlq
+        run: |
+          python -m pip install tomlq
+
+      - name: Get repos
+        id: set_repo_info
+        run: |
+          page=1
+          result=()
+          while true; do
+            repos=$(curl -s -H "Authorization: token ${{ secrets.API_GITHUB }}" "https://api.github.com/orgs/LedgerHQ/repos?page=$page&per_page=200")
+            
+            if ! echo "$repos" | jq -e '.[].name' >/dev/null; then
+              # all repos have been listed
+              echo "all repos have been listed"
+              break
+            fi
+            
+            # Ajouter les noms des dépôts à la liste result
+            for repo in $(echo "$repos" | jq -r '.[] | select((.name | startswith("app-")) and (.archived == false) and (.private == false)) | .name'); do
+              result+=("$repo")
+            done
+
+            ((page++))
+          done
+          
+          for repo in "${result[@]}"; do
+            toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/$repo/develop/ledger_app.toml")
+            if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
+              
+              # Récupérer les attributs du fichier toml
+              build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
+              sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
+              devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
+              
+              #repo_info+="$repo, $build_directory, $sdk, $devices\n"
+              repo_info["$repo"]=$build_directory,$sdk,$devices 
+            else
+              echo "$repo does not   contain ledger_app.toml"
+            fi
+          done
+          echo "pouet"
+          echo "rep inf : $repo_info"
+          echo "repo_info=$repo_info" >> $GITHUB_OUTPUT
+          

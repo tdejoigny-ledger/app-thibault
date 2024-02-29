@@ -1,0 +1,42 @@
+name: Parse toml
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  get_repos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Install tomlq
+        run: |
+          python -m pip install tomlq
+
+      - name: Get repos
+        run: |
+            toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/app-starknet/develop/ledger_app.toml")
+            echo "$toml_content" 
+            if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
+              echo "$repo contains ledger_app.toml"
+              
+              # Récupérer les attributs du fichier toml
+              build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
+              sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
+              devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
+              
+              # Afficher les attributs
+              echo "build_directory: $build_directory"
+              echo "sdk: $sdk"
+              echo "devices: $devices"
+              break
+            else
+              echo "$repo does not contain ledger_app.toml"
+            fi
