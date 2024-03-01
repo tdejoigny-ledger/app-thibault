@@ -103,6 +103,7 @@ jobs:
       - name: Clone SDK
         uses: actions/checkout@v3
         with:
+          repository: LedgerHQ/ledger-secure-sdk
           path: sdk
           ref: ${{ inputs.sdk_branch }}
 
