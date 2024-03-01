@@ -49,7 +49,7 @@ jobs:
         id: set-matrix
         run: |
           repo_info="["
-          for repo in "${env.repo_list[@]}"; do
+          for repo in ${{ env.repo_list }}; do
             toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/$repo/develop/ledger_app.toml")
             if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
               
