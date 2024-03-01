@@ -10,10 +10,10 @@ on:
   pull_request:
 
 jobs:
-  get_repos:
+  prepare-matrix:
     runs-on: ubuntu-latest
     outputs:
-      repo_info: ${{ steps.set_repo_info.outputs.repo_info }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -23,10 +23,11 @@ jobs:
           python -m pip install tomlq
 
       - name: Get repos
-        id: set_repo_info
+        id: set-matrix
         run: |
           page=1
           result=()
+          repo_info=""
           while true; do
             repos=$(curl -s -H "Authorization: token ${{ secrets.API_GITHUB }}" "https://api.github.com/orgs/LedgerHQ/repos?page=$page&per_page=200")
             
@@ -52,14 +53,34 @@ jobs:
               build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
               sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
-              
-              #repo_info+="$repo, $build_directory, $sdk, $devices\n"
-              repo_info["$repo"]=$build_directory,$sdk,$devices 
+              repo_info+="Repo: $repo, build_directory: $build_directory, sdk: $sdk, devices: $devices\n"              
             else
               echo "$repo does not   contain ledger_app.toml"
             fi
           done
           echo "pouet"
           echo "rep inf : $repo_info"
-          echo "repo_info=$repo_info" >> $GITHUB_OUTPUT
+          echo "matrix=$repo_info" >> $GITHUB_OUTPUT
           
+  test-build:
+    name: Build for all targets
+    needs: [prepare-matrix]
+    strategy:
+      fail-fast: false
+      matrix:
+        ${{ fromJSON(needs.prepare-matrix.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone App
+        uses: actions/checkout@v3
+        with:
+          repository: LedgerHQ/${{ matrix.Repo }}
+          submodules: true
+
+      - name: Build Path
+        run: |
+          echo "build path"
+          echo "build_directory=${{ matrix.build_directory }}" >> $GITHUB_ENV
