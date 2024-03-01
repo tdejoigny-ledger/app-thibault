@@ -66,6 +66,14 @@ jobs:
           repo_info_json+="]"
           echo "rep json : $repo_info_json"
           echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
+
+  print-matrix:
+    needs: [prepare-matrix]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print matrix
+        run: echo "Matrix content: ${{ needs.prepare-matrix.outputs.matrix }}"
+
           
   test-build:
     name: Build for all targets
