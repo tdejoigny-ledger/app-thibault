@@ -67,7 +67,7 @@ jobs:
           echo "rep json : $repo_info_json"
           echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
 
-  print-matrix:
+  print-matrix2:
     needs: [prepare-matrix]
     runs-on: ubuntu-latest
     steps:
