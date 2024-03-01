@@ -23,7 +23,7 @@ jobs:
         id: set-matrix
         run: |
           echo "pouet"
-          repo_info_json="[{\"repo\": \"app-u2f\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"},{\"repo\": \"app-pouet\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"}]"
+          repo_info_json="[{\"repo\": \"app-u2f\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"},{\"repo\": \"app-velas\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"}]"
           echo "matrix=${repo_info_json}" >> $GITHUB_OUTPUT
           
           # repo_info_json='[{"repo": "app-u2f", "build_directory": "./", "sdk": "C", "devices": "nanos, nanox, nanos+, stax"}, {"repo": "app-pouet", "build_directory": "./", "sdk": "C", "devices": "nanos, nanox, nanos+, stax"}]'
@@ -53,7 +53,7 @@ jobs:
       - name: Clone App
         uses: actions/checkout@v3
         with:
-          repository: LedgerHQ/${{ matrix.Repo }}
+          repository: LedgerHQ/${{ matrix.repo }}
           submodules: true
 
       - name: Build Path
