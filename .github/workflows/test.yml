@@ -55,7 +55,7 @@ jobs:
               sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
               repo_info2+="Repo: $repo, build_directory: $build_directory, sdk: $sdk, devices: $devices\n"
-              repo_info+=("{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},")              
+              repo_info+="{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"              
             else
               echo "$repo does not   contain ledger_app.toml"
             fi
