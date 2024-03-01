@@ -43,7 +43,7 @@ jobs:
             ((page++))
           done
           
-          echo "repo_list=$result" >> $GITHUB_ENV
+          echo "repo_list=${result[@]}" >> $GITHUB_ENV
           
       - name: Extract metadata
         id: set-matrix
