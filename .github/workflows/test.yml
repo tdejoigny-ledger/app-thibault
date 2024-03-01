@@ -53,14 +53,17 @@ jobs:
               build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
               sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
-              repo_info+="Repo: $repo, build_directory: $build_directory, sdk: $sdk, devices: $devices\n"              
+              # repo_info+="Repo: $repo, build_directory: $build_directory, sdk: $sdk, devices: $devices\n"
+              repo_info+=("{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"}")              
             else
               echo "$repo does not   contain ledger_app.toml"
             fi
           done
           echo "pouet"
           echo "rep inf : $repo_info"
-          echo "matrix=$repo_info" >> $GITHUB_OUTPUT
+          repo_info_json=$(jq -n --argjson arr "$repo_info" '$arr')
+           echo "rep json : $repo_info"
+          echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
           
   test-build:
     name: Build for all targets
