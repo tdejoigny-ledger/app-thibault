@@ -50,7 +50,9 @@ jobs:
     steps:
       - name: show repo
         run: |
-          echo "repo : ${{ matrix.repo.repo }}"    
+          echo "repo : ${{ matrix.repo.repo }}"
+          echo "build dir : ${{ matrix.repo.build_directory }}"
+          echo "devices : ${{ matrix.repo.devices }}"          
     
       - name: Clone App
         uses: actions/checkout@v3
