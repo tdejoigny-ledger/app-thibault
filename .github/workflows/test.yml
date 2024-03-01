@@ -45,7 +45,7 @@ jobs:
 
             ((page++))
           done
-          
+          count=0
           for repo in "${result[@]}"; do
             toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/$repo/develop/ledger_app.toml")
             if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
@@ -54,18 +54,21 @@ jobs:
               build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
               sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
-              repo_info2+="Repo: $repo, build_directory: $build_directory, sdk: $sdk, devices: $devices\n"
-              repo_info+="{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"              
+              repo_info+="{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
+
+              ((count++))
+              if [ "$count" -eq 10 ]; then
+                 break
+              fi
+              
             else
               echo "$repo does not   contain ledger_app.toml"
             fi
           done
           echo "pouet"
-          echo "rep inf 2: $repo_info2"
-          echo "rep inf : $repo_info"
           repo_info_json="${repo_info%,}"
           repo_info_json+="]"
-           echo "rep json : $repo_info"
+          echo "rep json : $repo_info_json"
           echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
           
   test-build:
