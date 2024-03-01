@@ -57,7 +57,7 @@ jobs:
               repo_info+="{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
 
               ((count++))
-              if [ "$count" -eq 10 ]; then
+              if [[ $count = 10 ]]; then
                  break
               fi
               
