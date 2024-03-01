@@ -28,6 +28,7 @@ jobs:
           page=1
           result=()
           repo_info="["
+          repo_info2="["
           while true; do
             repos=$(curl -s -H "Authorization: token ${{ secrets.API_GITHUB }}" "https://api.github.com/orgs/LedgerHQ/repos?page=$page&per_page=200")
             
@@ -53,13 +54,14 @@ jobs:
               build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
               sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
-              # repo_info+="Repo: $repo, build_directory: $build_directory, sdk: $sdk, devices: $devices\n"
+              repo_info2+="Repo: $repo, build_directory: $build_directory, sdk: $sdk, devices: $devices\n"
               repo_info+=("{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},")              
             else
               echo "$repo does not   contain ledger_app.toml"
             fi
           done
           echo "pouet"
+          echo "rep inf 2: $repo_info2"
           echo "rep inf : $repo_info"
           repo_info_json="${repo_info%,}"
           repo_info_json+="]"
