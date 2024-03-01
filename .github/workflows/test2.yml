@@ -55,7 +55,7 @@ jobs:
       - name: Clone App
         uses: actions/checkout@v3
         with:
-          repository: LedgerHQ/${{ matrix.repo }}
+          repository: LedgerHQ/${{ matrix.repo.repo }}
           submodules: true
 
       - name: Build Path
