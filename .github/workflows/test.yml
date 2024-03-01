@@ -72,7 +72,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print matrix
-        run: echo "Matrix content: ${{ needs.prepare-matrix.outputs.matrix }}"
+        run: |
+           echo "Matrix content: ${{ needs.prepare-matrix.outputs.matrix }}"
 
           
   test-build:
