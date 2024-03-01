@@ -25,7 +25,10 @@ jobs:
           echo "pouet"
           repo_info_json="[{\"repo\": \"app-u2f\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"},
                            {\"repo\": \"app-pouet\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"}]"
-          echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
+          echo "matrix=${repo_info_json}" >> $GITHUB_OUTPUT
+          
+          # repo_info_json='[{"repo": "app-u2f", "build_directory": "./", "sdk": "C", "devices": "nanos, nanox, nanos+, stax"}, {"repo": "app-pouet", "build_directory": "./", "sdk": "C", "devices": "nanos, nanox, nanos+, stax"}]'
+          #echo "matrix=${repo_info_json}" 
 
   print-matrix2:
     needs: [prepare-matrix]
