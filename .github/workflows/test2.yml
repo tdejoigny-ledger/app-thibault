@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
     strategy:
       matrix:
-        repo: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+        repo: ${{  fromJson(needs.prepare-matrix.outputs.matrix)  }}
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
