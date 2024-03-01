@@ -43,16 +43,15 @@ jobs:
     needs: [prepare-matrix]
     strategy:
       fail-fast: false
-      matrix:
-        repo: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
 
     steps:
       - name: show repo
         run: |
-          echo "repo : ${{ matrix.repo.repo }}"
-          echo "build dir : ${{ matrix.repo.build_directory }}"
-          echo "devices : ${{ matrix.repo.devices }}"          
+          echo "repo : ${{ matrix.repo }}"
+          echo "build dir : ${{ matrix.build_directory }}"
+          echo "devices : ${{ matrix.devices }}"          
     
       - name: Clone App
         uses: actions/checkout@v3
