@@ -1,4 +1,4 @@
-name: Parse toml
+name: List Repositories
 
 on:
   workflow_dispatch:
@@ -10,33 +10,51 @@ on:
   pull_request:
 
 jobs:
-  get_repos:
+  prepare-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        
-      - name: Install tomlq
-        run: |
-          python -m pip install tomlq
+
 
       - name: Get repos
+        id: set-matrix
         run: |
-            toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/app-starknet/develop/ledger_app.toml")
-            echo "$toml_content" 
-            if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
-              echo "$repo contains ledger_app.toml"
-              
-              # Récupérer les attributs du fichier toml
-              build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
-              sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
-              devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
-              
-              # Afficher les attributs
-              echo "build_directory: $build_directory"
-              echo "sdk: $sdk"
-              echo "devices: $devices"
-              break
-            else
-              echo "$repo does not contain ledger_app.toml"
-            fi
+          echo "pouet"
+          repo_info_json="[{\"repo\": \"app-u2f\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"},
+                           {\"repo\": \"app-pouet\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"}]
+          echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
+
+  print-matrix2:
+    needs: [prepare-matrix]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print matrix
+        run: |
+           echo "Matrix content: ${{ needs.prepare-matrix.outputs.matrix }}"
+
+          
+  test-build:
+    name: Build for all targets
+    needs: [prepare-matrix]
+    strategy:
+      fail-fast: false
+      matrix:
+        ${{ fromJSON(needs.prepare-matrix.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
+
+    steps:
+      - name: Clone App
+        uses: actions/checkout@v3
+        with:
+          repository: LedgerHQ/${{ matrix.Repo }}
+          submodules: true
+
+      - name: Build Path
+        run: |
+          echo "build path"
+          echo "build_directory=${{ matrix.build_directory }}" >> $GITHUB_ENV
