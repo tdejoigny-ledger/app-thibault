@@ -1,12 +1,17 @@
-name: List Repositories
+name: Build all apps on latest SDK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-      - main
-      - develop
+    inputs:
+      run_stax:
+        type: boolean
+        required: false
+        default: false
+
+      sdk_branch:
+        type: string
+        required: false
+        default: ''
   pull_request:
 
 jobs:
@@ -22,7 +27,7 @@ jobs:
         run: |
           python -m pip install tomlq
 
-      - name: Get repos
+      - name: Get apps repos
         run: |
           page=1
           result=()
@@ -35,7 +40,7 @@ jobs:
               break
             fi
             
-            # Ajouter les noms des dépôts à la liste result
+            # add filtered repos to the list
             for repo in $(echo "$repos" | jq -r '.[] | select((.name | startswith("app-")) and (.archived == false) and (.private == false)) | .name'); do
               result+=("$repo")
             done
@@ -51,19 +56,20 @@ jobs:
           repo_info="["
           for repo in ${{ env.repo_list }}; do
             toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/$repo/develop/ledger_app.toml")
+            # check if the toml file is present in the repo
             if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
               
-              # Récupérer les attributs du fichier toml
+              # read toml file attributes
               build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
               sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
               repo_info+="{\"repo_name\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
-
               
             else
-              echo "$repo does not   contain ledger_app.toml"
+              echo "$repo does not contain ledger_app.toml"
             fi
           done
+          # remove the last ","
           repo_info_json="${repo_info%,}"
           repo_info_json+="]"
           echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
@@ -94,3 +100,14 @@ jobs:
           repository: LedgerHQ/${{ matrix.repo_info.repo_name }}
           submodules: true
 
+      - name: Clone SDK
+        uses: actions/checkout@v3
+        with:
+          path: sdk
+          ref: ${{ inputs.sdk_branch }}
+
+      - name: Build NanoS
+        if: "'nanos' in matrix.repo_info.devices.split(', ')"
+        run: |
+          [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
+          TARGET=nanos BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
