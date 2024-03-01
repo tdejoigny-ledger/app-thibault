@@ -1,4 +1,4 @@
-name: List Repositories
+name: test 2
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
         run: |
           echo "pouet"
           repo_info_json="[{\"repo\": \"app-u2f\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"},
-                           {\"repo\": \"app-pouet\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"}]
+                           {\"repo\": \"app-pouet\", \"build_directory\": \"./\", \"sdk\": \"C\", \"devices\": \"nanos, nanox, nanos+, stax\"}]"
           echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
 
   print-matrix2:
