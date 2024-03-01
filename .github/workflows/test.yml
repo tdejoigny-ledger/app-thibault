@@ -28,7 +28,6 @@ jobs:
           page=1
           result=()
           repo_info="["
-          repo_info2="["
           while true; do
             repos=$(curl -s -H "Authorization: token ${{ secrets.API_GITHUB }}" "https://api.github.com/orgs/LedgerHQ/repos?page=$page&per_page=200")
             
@@ -54,7 +53,7 @@ jobs:
               build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
               sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
-              repo_info+="{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
+              repo_info+="{\"repo_name\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
 
               
             else
@@ -67,7 +66,7 @@ jobs:
           echo "rep json : $repo_info_json"
           echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
 
-  print-matrix2:
+  print-matrix:
     needs: [prepare-matrix]
     runs-on: ubuntu-latest
     steps:
@@ -82,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ${{ needs.prepare-matrix.outputs.matrix }}
+        repo_info: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/ledgerhq/ledger-app-builder/ledger-app-builder:latest
@@ -91,10 +90,6 @@ jobs:
       - name: Clone App
         uses: actions/checkout@v3
         with:
-          repository: LedgerHQ/${{ matrix.Repo }}
+          repository: LedgerHQ/${{ matrix.repo_info.repo_name }}
           submodules: true
 
-      - name: Build Path
-        run: |
-          echo "build path"
-          echo "build_directory=${{ matrix.build_directory }}" >> $GITHUB_ENV
