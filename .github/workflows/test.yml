@@ -23,11 +23,9 @@ jobs:
           python -m pip install tomlq
 
       - name: Get repos
-        id: set-matrix
         run: |
           page=1
           result=()
-          repo_info="["
           while true; do
             repos=$(curl -s -H "Authorization: token ${{ secrets.API_GITHUB }}" "https://api.github.com/orgs/LedgerHQ/repos?page=$page&per_page=200")
             
@@ -44,8 +42,14 @@ jobs:
 
             ((page++))
           done
-
-          for repo in "${result[@]}"; do
+          
+          echo "repo_list=$result" >> $GITHUB_ENV
+          
+      - name: Extract metadata
+        id: set-matrix
+        run: |
+          repo_info="["
+          for repo in "${env.repo_list[@]}"; do
             toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/$repo/develop/ledger_app.toml")
             if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
               
@@ -60,10 +64,8 @@ jobs:
               echo "$repo does not   contain ledger_app.toml"
             fi
           done
-          echo "pouet"
           repo_info_json="${repo_info%,}"
           repo_info_json+="]"
-          echo "rep json : $repo_info_json"
           echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
 
   print-matrix:
@@ -74,7 +76,6 @@ jobs:
         run: |
            echo "Matrix content: ${{ needs.prepare-matrix.outputs.matrix }}"
 
-          
   test-build:
     name: Build for all targets
     needs: [prepare-matrix]
