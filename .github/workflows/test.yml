@@ -45,7 +45,7 @@ jobs:
 
             ((page++))
           done
-          count=0
+
           for repo in "${result[@]}"; do
             toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/$repo/develop/ledger_app.toml")
             if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
@@ -56,10 +56,6 @@ jobs:
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
               repo_info+="{\"repo\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
 
-              ((count++))
-              if [[ $count = 10 ]]; then
-                 break
-              fi
               
             else
               echo "$repo does not   contain ledger_app.toml"
