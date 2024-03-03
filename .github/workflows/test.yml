@@ -63,8 +63,11 @@ jobs:
               build_directory=$(echo "$toml_content" | tomlq -r '.app.build_directory')
               sdk=$(echo "$toml_content" | tomlq -r '.app.sdk')
               devices=$(echo "$toml_content" | tomlq -r '.app.devices | join(", ")')
-              repo_info+="{\"repo_name\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
               
+              # select only C apps
+              if [[ $sdk == "C" ]]; then
+                repo_info+="{\"repo_name\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
+              fi
             else
               echo "$repo does not contain ledger_app.toml"
             fi
@@ -114,25 +117,25 @@ jobs:
           TARGET=nanos BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
 
       - name: Build NanoX
-        if: "contains(matrix.repo_info.devices, 'nanos')"
+        if: "contains(matrix.repo_info.devices, 'nanox')"
         run: |
           [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
           TARGET=nanox BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
 
       - name: Build NanoS2
-        if: "contains(matrix.repo_info.devices, 'nanos')"
+        if: "contains(matrix.repo_info.devices, 'nanos+')"
         run: |
           [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
           TARGET=nanos2 BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
 
       - name: Build Stax
-        if: "contains(matrix.repo_info.devices, 'nanos')"
+        if: "contains(matrix.repo_info.devices, 'stax')"
         run: |
           [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
           TARGET=stax BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
 
       - name: Build Europa
-        if: "contains(matrix.repo_info.devices, 'nanos')"
+        if: "contains(matrix.repo_info.devices, 'europa')"
         run: |
           [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
           TARGET=europa BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
