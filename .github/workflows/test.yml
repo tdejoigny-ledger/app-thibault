@@ -112,3 +112,27 @@ jobs:
         run: |
           [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
           TARGET=nanos BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
+
+      - name: Build NanoX
+        if: "contains(matrix.repo_info.devices, 'nanos')"
+        run: |
+          [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
+          TARGET=nanox BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
+
+      - name: Build NanoS2
+        if: "contains(matrix.repo_info.devices, 'nanos')"
+        run: |
+          [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
+          TARGET=nanos2 BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
+
+      - name: Build Stax
+        if: "contains(matrix.repo_info.devices, 'nanos')"
+        run: |
+          [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
+          TARGET=stax BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
+
+      - name: Build Europa
+        if: "contains(matrix.repo_info.devices, 'nanos')"
+        run: |
+          [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
+          TARGET=europa BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
