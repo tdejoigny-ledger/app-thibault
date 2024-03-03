@@ -27,12 +27,12 @@ jobs:
         run: |
           python -m pip install tomlq
 
-      - name: Get apps repos
+      - name: Get C apps repos
         run: |
           page=1
           result=()
           while true; do
-            repos=$(curl -s -H "Authorization: token ${{ secrets.API_GITHUB }}" "https://api.github.com/orgs/LedgerHQ/repos?page=$page&per_page=200")
+            repos=$(curl -s "https://api.github.com/orgs/LedgerHQ/repos?page=$page&per_page=200")
             
             if ! echo "$repos" | jq -e '.[].name' >/dev/null; then
               # all repos have been listed
@@ -56,7 +56,7 @@ jobs:
           repo_info="["
           for repo in ${{ env.repo_list }}; do
             toml_content=$(curl -s "https://raw.githubusercontent.com/LedgerHQ/$repo/develop/ledger_app.toml")
-            # check if the toml file is present in the repo
+            # check if the toml file is present in the repo and if the repo is not for a rust app
             if [[ ! $toml_content =~ "404: Not Found" ]] && [[ ! $toml_content =~ "rust-app" ]]; then
               
               # read toml file attributes
@@ -72,7 +72,7 @@ jobs:
               echo "$repo does not contain ledger_app.toml"
             fi
           done
-          # remove the last ","
+          # remove the last "," in json
           repo_info_json="${repo_info%,}"
           repo_info_json+="]"
           echo "matrix=$repo_info_json" >> $GITHUB_OUTPUT
