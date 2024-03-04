@@ -31,6 +31,7 @@ jobs:
         run: |
           page=1
           result=()
+          pouet=()
           while true; do
             repos=$(curl -s "https://api.github.com/orgs/LedgerHQ/repos?page=$page&per_page=200")
             
@@ -43,7 +44,7 @@ jobs:
             # add filtered repos to the list
             for repo in $(echo "$repos" | jq -r '.[] | select((.name | startswith("app-")) and (.archived == false) and (.private == false)) | .name'); do
               result+=("$repo")
-              pouet = $repo
+              pouet = ("$repo")
               default_branch=$(echo "$pouet" | jq -r '.[] | select(.name == $repo) | .default_branch')
               echo "Repo: $repo, Default branch: $default_branch"
             done
