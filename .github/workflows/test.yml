@@ -69,7 +69,7 @@ jobs:
               
               # select only C apps
               if [[ $sdk == "C" ]]; then
-                repo_info+="{\"repo_name\": \"$repo\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
+                repo_info+="{\"repo_name\": \"$repo_name\", \"build_directory\": \"$build_directory\", \"sdk\": \"$sdk\", \"devices\": \"$devices\"},"
               fi
             else
               echo "$repo does not contain ledger_app.toml"
