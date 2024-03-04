@@ -44,7 +44,7 @@ jobs:
             # add filtered repos to the list
             for repo in $(echo "$repos" | jq -r '.[] | select((.name | startswith("app-")) and (.archived == false) and (.private == false)) | .name'); do
               result+=("$repo")
-              pouet = ("$repo")
+              pouet=("$repo")
               default_branch=$(echo "$repos" | jq -r '.[] | select(.name == $pouet) | .default_branch')
               echo "Repo: $repo, Default branch: $default_branch"
             done
