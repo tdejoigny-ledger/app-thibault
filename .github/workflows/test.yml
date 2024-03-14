@@ -115,7 +115,7 @@ jobs:
           ref: ${{ inputs.sdk_branch }}
 
       - name: Build NanoS
-        if: "contains(replace(matrix.repo_info.devices, 'nanos+', ''), 'nanos')"
+        if: "startsWith(matrix.repo_info.devices, 'nanos,') "
         run: |
           [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
           TARGET=nanos BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
