@@ -116,13 +116,11 @@ jobs:
 
       - name: Build NanoS
         run: |
-        
-        if ${{ matrix.repo_info.devices }} =~ '\\bnanos\\b'; then 
-          [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
-          TARGET=nanos BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
-        fi
-        echo "matrice : ${{ matrix.repo_info.devices }}"
-        
+          if [[ "${{ matrix.repo_info.devices }}" =~ \bnanos\b ]]; then 
+            [ -n '${{ matrix.repo_info.build_directory }}' ] && cd ${{ matrix.repo_info.build_directory }}
+            TARGET=nanos BOLOS_SDK=$GITHUB_WORKSPACE/sdk make
+          fi
+          echo "matrice : ${{ matrix.repo_info.devices }}"        
       - name: Build NanoX
         if: "contains(matrix.repo_info.devices, 'nanox')"
         run: |
