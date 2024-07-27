@@ -22,7 +22,14 @@ jobs:
       app_branch_name: tdj/remove_nanoS_support
       upload_app_binaries_artifact: boilerplate_binaries
 
-
+  build_boilerplate_application_nanos:
+    name: Build boilerplate application using the reusable workflow
+    uses: LedgerHQ/ledger-app-workflows/.github/workflows/reusable_build.yml@v1
+    with:
+      app_repository: LedgerHQ/app-boilerplate
+      app_branch_name: nanos_baseline
+      run_for_devices: '["nanos"]'
+      upload_app_binaries_artifact: boilerplate_binaries
 
 
   build_install_test:
