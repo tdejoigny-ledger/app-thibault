@@ -20,6 +20,7 @@ jobs:
     with:
       app_repository: LedgerHQ/app-boilerplate
       app_branch_name: tdj/remove_nanoS_support
+      upload_app_binaries_artifact: boilerplate_binaries
 
   build_boilerplate_application_nanos:
     name: Build boilerplate application using the reusable workflow
@@ -34,7 +35,7 @@ jobs:
 
   build_install_test:
     name: Install and test the library
-    needs: [build_boilerplate_application]
+    needs: [build_boilerplate_application_nanos]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
