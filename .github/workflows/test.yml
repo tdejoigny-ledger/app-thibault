@@ -24,18 +24,16 @@ jobs:
 
   build_boilerplate_application_nanos:
     name: Build boilerplate application using the reusable workflow
-    needs: [build_boilerplate_application]
     uses: LedgerHQ/ledger-app-workflows/.github/workflows/reusable_build.yml@v1
     with:
       app_repository: LedgerHQ/app-boilerplate
       app_branch_name: nanos_baseline
       run_for_devices: '["nanos"]'
-      upload_app_binaries_artifact: boilerplate_binaries
-
+      upload_app_binaries_artifact: boilerplate_binaries_nanos
 
   build_install_test:
     name: Install and test the library
-    needs: [build_boilerplate_application_nanos]
+    needs: [build_boilerplate_application_nanos, build_boilerplate_application]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -65,6 +63,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: boilerplate_binaries
+        path: ./build/
+
+    - name: Download app binaries nano S
+      uses: actions/download-artifact@v4
+      with:
+        name: boilerplate_binaries_nanos
         path: ./build/
 
     - name: Create boilerplate manifest
